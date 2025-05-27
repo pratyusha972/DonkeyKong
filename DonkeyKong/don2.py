@@ -1,26 +1,23 @@
 import os 
-import kon
 from kon import *
-import con
 from con import *
 import random
-import threading
 from threading import Thread
 import time
-from time import sleep
 from multiprocessing import Process
-class person(object):
-     	def __init__(self,x,y,score,plaflag,donflag):
-		self.x=x
-		self.y=y
-		self.score=score
-		self.plaflag=plaflag
-		self.donflag=donflag
+
+class Person(object):
+     	def __init__(self, x, y, score, playerflag, donkeyflag):
+		self.x = x
+		self.y = y
+		self.score = score
+		self.playerflag = playerflag
+		self.donkeyflag = donkeyflag
 
 	def life(self):
-		self.life=3
+		self.life = 3
 
-	def prin(self):
+	def display_info(self):
 		 for i in range(0,30):
 			for j in range(0,79):
 			        sys.stdout.write(matrix[i][j])
@@ -28,7 +25,7 @@ class person(object):
 		 print "SCORE =", self.score 
 		 print "LIFES =", self.life
 
-	def checkwall(self,inp):
+	def checkwall(self, inp):
 		if inp == "a" :
 			if self.y == 1:
 				return 1
@@ -38,51 +35,54 @@ class person(object):
 				return 1
 			return 0
 
-	def getcoin(self,a,b):
+	def getcoin(self, a, b):
 		if matrix[a][b]=="C":
 			self.score = self.score+5
-	def firedon(self,a,b,inp):
-		o=matrix[a][b]
-		if self.donflag==1:
-			matrix[a][b]=matrix[self.x][self.y]
-			matrix[self.x][self.y]="C"
-			self.donflag=0
-			self.y=b
-		elif self.donflag==0:
-			self.getposition(inp,a,b,self.plaflag)
-		if o=="C":
-			self.donflag=1
-		if o=="H":
-			self.plaflag=1
+			
+	def firedon(self, a, b, inp):
+		o = matrix[a][b]
+		if self.donkeyflag == 1:
+			matrix[a][b] = matrix[self.x][self.y]
+			matrix[self.x][self.y] = "C"
+			self.donkeyflag = 0
+			self.y = b
+		elif self.donkeyflag == 0:
+			self.getposition(inp, a, b, self.playerflag)
+		if o == "C":
+			self.donkeyflag = 1
+		if o == "H":
+			self.playerflag = 1
 
-	def jumpmain(self,i,j,a,b):
-		r=matrix[i][j]
-		matrix[i][j]=matrix[a][b]
-		if self.plaflag==1:
-			matrix[self.x][self.y]="H"
-			self.plaflag=0
+	def jumpmain(self, i, j, a, b):
+		r = matrix[i][j]
+		matrix[i][j] = matrix[a][b]
+		if self.playerflag == 1:
+			matrix[self.x][self.y] = "H"
+			self.playerflag = 0
 		else:
-			matrix[self.x][self.y]=" "
+			matrix[self.x][self.y] = " "
 		if r=="H":
-			self.plaflag=1;
-		self.x=i
-		self.y=j
-	def getsub(self,j,h,a,b):
+			self.playerflag = 1
+		self.x = i
+		self.y = j
+		
+	def getsub(self, j, h, a, b):
 		self.jumpmain(j,h,a,b)
 		os.system("clear")
-		self.prin()
+		self.display_info()
 		time.sleep(0.4)
-	def getposition(self,inp,x,y,plaflag):
-		if (matrix[self.x+1][self.y]=="X" or matrix[self.x+1][self.y]=="H"):
-			if self.checkwall(inp)!=1:
-				if inp=="a":
-					if matrix[self.x+1][self.y-1]=="X" or matrix[self.x+1][self.y-1]=="H": 
+		
+	def getposition(self, inp, x, y, playerflag):
+		if (matrix[self.x+1][self.y] == "X" or matrix[self.x+1][self.y] == "H"):
+			if self.checkwall(inp) != 1:
+				if inp == "a":
+					if matrix[self.x+1][self.y-1] == "X" or matrix[self.x+1][self.y-1] == "H": 
 						self.jumpmain(self.x,self.y-1,self.x,self.y)
 				elif inp=="d":
 					if matrix[self.x+1][self.y+1]=="X" or matrix[self.x+1][self.y+1]=="H": 
 						self.jumpmain(self.x,self.y+1,self.x,self.y)
 
-	def updown(self,inp,x,y,plaflag):
+	def updown(self,inp,x,y,playerflag):
 		if inp=="s":
 			if matrix[self.x+1][self.y]=="H":
 				self.jumpmain(self.x+1,self.y,self.x,self.y)
@@ -146,24 +146,26 @@ class person(object):
 						self.getsub(self.x-1,self.y,self.x,self.y)
 						self.getsub(self.x+1,self.y,self.x,self.y)
 
-class player(person):
-	def __init__(self,x,y,score,plaflag,donflag):
-		person.__init__(self,x,y,score,plaflag,donflag)
-	def jumpmain(self,i,j,a,b):
-		r=matrix[i][j]
-		matrix[i][j]=matrix[a][b]
-		if self.plaflag==1:
-			matrix[self.x][self.y]="H"
-			self.plaflag=0
+class Player(Person):
+	def __init__(self, x, y, score, playerflag, donkeyflag):
+		Person.__init__(self, x, y, score, playerflag, donkeyflag)
+	
+	def jumpmain(self, i, j, a, b):
+		r = matrix[i][j]
+		matrix[i][j] = matrix[a][b]
+		if self.playerflag == 1:
+			matrix[self.x][self.y] = "H"
+			self.playerflag = 0
 		else:
-			matrix[self.x][self.y]=" "
-		if r=="H":
-			self.plaflag=1;
-		self.x=i
-		self.y=j
-		if r=="O" or r=="D":
+			matrix[self.x][self.y] = " "
+		if r == "H":
+			self.playerflag = 1;
+		self.x = i
+		self.y = j
+		if r == "O" or r == "D":
 			self.chill(r)
-	def chill(self,cha):
+			
+	def chill(self, cha):
 		if cha=="D":
 			matrix[self.x][self.y]="D"
 		else:
@@ -173,26 +175,27 @@ class player(person):
 	 	matrix[28][1]="P"
 	 	self.life=self.life-1
 	 	os.system("clear")
- 		self.prin()
+ 		self.display_info()
 	 	print "PLAYER DIED!"
-class donkey(person):
-     	def __init__(self,x,y,score,plaflag,donflag):
-		person.__init__(self,x,y,score,plaflag,donflag)
 
-	def position(self,x,y,plaflag,donflag):
-			if harry.x==self.x and harry.y-1==self.y:
-		 		harry.score=harry.score-25
-		 		if harry.plaflag==1:
-		 			matrix[harry.x][harry.y]="H"
-		 			harry.plaflag=0
+class Donkey(Person):
+     	def __init__(self,x,y,score,playerflag,donkeyflag):
+		Person.__init__(self,x,y,score,playerflag,donkeyflag)
+
+	def position(self,x,y,playerflag,donkeyflag):
+			if player.x==self.x and player.y-1==self.y:
+		 		player.score=player.score-25
+		 		if player.playerflag==1:
+		 			matrix[player.x][player.y]="H"
+		 			player.playerflag=0
 		 		else:	
-		 			matrix[harry.x][harry.y]=" "
-		 		harry.x=28
-		 		harry.y=1
+		 			matrix[player.x][player.y]=" "
+		 		player.x=28
+		 		player.y=1
 		 		matrix[28][1]="P"
 		 		matrix[self.x][self.y]="D"
-		 		harry.life=harry.life-1
-		 		harry.prin()
+		 		player.life=player.life-1
+		 		player.display_info()
 		 		print "PLAYER DIED!"
 			else:
 				h=random.randint(18,59)
@@ -202,34 +205,34 @@ class donkey(person):
 				elif h >= self.y:
 					if self.checkwall("d")!=1:
 						self.firedon(self.x,self.y+1,"d")
-class fireball(person):
-        def __init__(self,x,y,score,plaflag,donflag):
-		person.__init__(self,x,y,score,plaflag,donflag)
+class Fireball(Person):
+        def __init__(self,x,y,score,playerflag,donkeyflag):
+		Person.__init__(self,x,y,score,playerflag,donkeyflag)
 	def jumpmain(self,i,j,a,b):
 		r=matrix[i][j]
 		matrix[i][j]=matrix[a][b]
-		if self.plaflag==1:
+		if self.playerflag==1:
 			matrix[self.x][self.y]="H"
-			self.plaflag=0
+			self.playerflag=0
 		else:
 			matrix[self.x][self.y]=" "
 		if r=="H":
-			self.plaflag=1
+			self.playerflag=1
 		elif r=="C":
-			self.donflag=1
+			self.donkeyflag=1
 		elif r=="P":
-			harry.x=28
-			harry.y=1
+			player.x=28
+			player.y=1
 			matrix[28][1]="P"
 			matrix[self.x][self.y]=" "
 		self.x=i
 		self.y=j
-	def kill(self,x,y,plaflag,donflag):
+	def kill(self,x,y,playerflag,donkeyflag):
 		flag=0
-		if  harry.x==self.x and (harry.y==self.y  or harry.y==self.y+1 or harry.y==self.y-1) :
+		if  player.x==self.x and (player.y==self.y  or player.y==self.y+1 or player.y==self.y-1) :
 			matrix[self.x][self.y]="O"
-			harry.x=28
-			harry.y=1
+			player.x=28
+			player.y=1
 			matrix[28][1]="P"
 		while matrix[self.x+1][self.y+1]!=" ":
 			if matrix[self.x+1][self.y+1]=="H" and matrix[self.x+2][self.y+1]=="H" and matrix[self.x+3][self.y+1]=="H" and matrix[self.x+4][self.y+1]=="H":
@@ -238,7 +241,7 @@ class fireball(person):
 				self.firedon(self.x,self.y+1,"d")
 				for i in range(1,5):
 					time.sleep(0.2)
-					self.updown("s",self.x,self.y,self.plaflag)
+					self.updown("s",self.x,self.y,self.playerflag)
 				break
 			time.sleep(0.02)
 			self.firedon(self.x,self.y+1,"d")
@@ -263,7 +266,7 @@ class fireball(person):
 							self.firedon(self.x,self.y-1,"a")
 							for i in range(1,6):
 								time.sleep(0.2)
-								self.updown("s",self.x,self.y,self.plaflag)
+								self.updown("s",self.x,self.y,self.playerflag)
 							break
 						time.sleep(0.2)		
 						self.firedon(self.x,self.y-1,"a")
@@ -278,7 +281,7 @@ class fireball(person):
 								self.firedon(self.x,self.y+1,"d")
 								for i in range(1,6):
 									time.sleep(0.2)
-									self.updown("s",self.x,self.y,self.plaflag)
+									self.updown("s",self.x,self.y,self.playerflag)
 								break
 							time.sleep(0.2)
 							self.firedon(self.x,self.y+1,"d")
@@ -295,7 +298,7 @@ class fireball(person):
 							self.firedon(self.x,self.y+1,"d")
 					   		for i in range(1,6):
 				   		        	time.sleep(0.1)
-								self.updown("s",self.x,self.y,self.plaflag)
+								self.updown("s",self.x,self.y,self.playerflag)
 							break
 						time.sleep(0.2)
 						self.firedon(self.x,self.y+1,"d")
@@ -310,7 +313,7 @@ class fireball(person):
 								self.firedon(self.x,self.y-1,"a")
 								for i in range(1,6):
 									time.sleep(0.2)
-									self.updown("s",self.x,self.y,self.plaflag)
+									self.updown("s",self.x,self.y,self.playerflag)
 								break
 							time.sleep(0.2)
 						        self.firedon(self.x,self.y-1,"a")	
@@ -320,73 +323,78 @@ class fireball(person):
 					elif matrix[self.x+1][self.y+1]==" " and flag!=1:
 				    		self.jump(self.x,self.y,"d")
 
-jimmy=donkey(4,1,0,0,0)			
-harry=player(28,1,0,0,0)
-harry.life()
+
+#startgame
+donkey=Donkey(4,1,0,0,0)			
+player=Player(28,1,0,0,0)
+player.life()
 matrix[4][1]="D"
 matrix[28][1]="P"
-matrix[jimmy.x][jimmy.y+1]="O"
+matrix[donkey.x][donkey.y+1]="O"
 os.system("clear")
-harry.prin()
+player.display_info()
+
 def mulfire():
 	u=8
-	ellie=[fireball(jimmy.x,jimmy.y+1,0,0,0)]
+	fireball_list=[Fireball(donkey.x,donkey.y+1,0,0,0)]
 	count=0
 	while(u):
-		ellie[count].kill(jimmy.x,jimmy.y+1,0,0)
-		ellie=ellie + [fireball(jimmy.x,jimmy.y+1,0,0,0)]
-		matrix[jimmy.x][jimmy.y+1]="O"
+		fireball_list[count].kill(donkey.x,donkey.y+1,0,0)
+		fireball_list=fireball_list + [Fireball(donkey.x,donkey.y+1,0,0,0)]
+		matrix[donkey.x][donkey.y+1]="O"
 		count=count+1
+
 def func():
 	os.system("stty cbreak -echo")
 	inp= sys.stdin.read(1)
 	os.system("stty -cbreak echo")
-	while(inp!="q" and harry.life>0):
-		if matrix[harry.x][harry.y-1]=="Q":
+	while(inp!="q" and player.life>0):
+		if matrix[player.x][player.y-1]=="Q":
 			print "YOU WON"
 			break
-		if ((harry.x==jimmy.x and harry.y-1==jimmy.y) or (matrix[harry.x][harry.y+1]=="O" or matrix[harry.x][harry.y-1]=="O" or matrix[harry.x][harry.y]=="O")):
-		 	harry.score=harry.score-25
-		 	if harry.plaflag==1:
-		 		matrix[harry.x][harry.y]="H"
-		 		harry.plaflag=0
+		if ((player.x==donkey.x and player.y-1==donkey.y) or (matrix[player.x][player.y+1]=="O" or matrix[player.x][player.y-1]=="O" or matrix[player.x][player.y]=="O")):
+		 	player.score=player.score-25
+		 	if player.playerflag==1:
+		 		matrix[player.x][player.y]="H"
+		 		player.playerflag=0
 		 	else:	
-		 		matrix[harry.x][harry.y]=" "
-			harry.x=28
-		 	harry.y=1
+		 		matrix[player.x][player.y]=" "
+			player.x=28
+		 	player.y=1
 		 	matrix[28][1]="P"
-		 	matrix[jimmy.x][jimmy.y]="D"
-		 	harry.life=harry.life-1
+		 	matrix[donkey.x][donkey.y]="D"
+		 	player.life=player.life-1
 			os.system("clear")
-			jimmy.position(jimmy.x,jimmy.y,jimmy.plaflag,jimmy.donflag)
-			harry.prin()
+			donkey.position(donkey.x,donkey.y,donkey.playerflag,donkey.donkeyflag)
+			player.display_info()
 		 	print "PLAYER DIED!"
 		else:
 			if inp==" ":
 				os.system("stty cbreak -echo")
 				inp= sys.stdin.read(1)
 				os.system("stty -cbreak echo")
-				harry.jump(harry.x,harry.y,inp)	
+				player.jump(player.x,player.y,inp)	
 			else:
 				if inp=="a":
-					harry.getcoin(harry.x,harry.y-1)
+					player.getcoin(player.x,player.y-1)
 				elif inp=="d":	
-					harry.getcoin(harry.x,harry.y+1)
+					player.getcoin(player.x,player.y+1)
 				if inp=="a" or inp=="d":
-					harry.getposition(inp,harry.x,harry.y,harry.plaflag)
+					player.getposition(inp,player.x,player.y,player.playerflag)
 				elif inp=="s" or inp=="w":
-					harry.updown(inp,harry.x,harry.y,harry.plaflag)
+					player.updown(inp,player.x,player.y,player.playerflag)
 				os.system("clear")
-				jimmy.position(jimmy.x,jimmy.y,jimmy.plaflag,jimmy.donflag)
-				harry.prin()
+				donkey.position(donkey.x,donkey.y,donkey.playerflag,donkey.donkeyflag)
+				player.display_info()
 		os.system("stty cbreak -echo")
 		inp= sys.stdin.read(1)
 		os.system("stty -cbreak echo")
-		if harry.life==0:
+		if player.life==0:
 			print "YOU LOST"
 			print "GAME OVER"
 			break
+
 if __name__ == "__main__": 
 	Thread(target=func).start()
-#Thread(target=die.kill(jimmy.x,jimmy.y+1,0,0)).start()
+	#Thread(target=die.kill(donkey.x,donkey.y+1,0,0)).start()
 	Thread(target=mulfire).start()
