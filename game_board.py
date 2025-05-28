@@ -1,6 +1,4 @@
-import sys
-matrix = []
-matrix.append([])
+matrix = [[]]
 for i in range(0,79):
 	matrix[0].append("X")
 for i in range(1,29):	
