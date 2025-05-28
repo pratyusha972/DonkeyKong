@@ -149,7 +149,7 @@ class Person(object):
 
 class Player(Person):
     def __init__(self, x, y, score, player_flag, donkey_flag):
-        Person.__init__(self, x, y, score, player_flag, donkey_flag)
+        super(Player, self).__init__(x, y, score, player_flag, donkey_flag)
     
     def jump_main(self, i, j, a, b):
         r = matrix[i][j]
@@ -181,8 +181,7 @@ class Player(Person):
 
 class Donkey(Person):
     def __init__(self, x, y, score, player_flag, donkey_flag):
-        super(self, x, y, score, player_flag, donkey_flag)
-        #Person.__init__(self, x, y, score, player_flag, donkey_flag)
+        super(Donkey, self).__init__(x, y, score, player_flag, donkey_flag)
 
     def position(self):
         if player.x == self.x and player.y-1 == self.y:
@@ -210,7 +209,7 @@ class Donkey(Person):
                     
 class Fireball(Person):
     def __init__(self, x, y, score, player_flag, donkey_flag):
-        super(self, x, y, score, player_flag, donkey_flag)
+        super(Fireball, self).__init__(x, y, score, player_flag, donkey_flag)
     
     def jumpmain(self, i, j, a, b):
         r=matrix[i][j]
@@ -333,7 +332,6 @@ class Fireball(Person):
 #startgame
 donkey=Donkey(4, 1, 0, 0, 0)			
 player= Player(28, 1, 0, 0, 0)
-player.life()
 matrix[4][1]="D"
 matrix[28][1]="P"
 matrix[donkey.x][donkey.y+1]="O"
@@ -345,7 +343,7 @@ def mul_fire():
     fireball_list = [Fireball(donkey.x, donkey.y + 1, 0, 0, 0)]
     count=0
     while u:
-        fireball_list[count].kill(donkey.x, donkey.y + 1, 0, 0)
+        fireball_list[count].kill()
         fireball_list = fireball_list + [Fireball(donkey.x, donkey.y + 1, 0, 0, 0)]
         matrix[donkey.x][donkey.y+1] = "O"
         count = count + 1
